@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManager.Web", "UserManager.Web\UserManager.Web.csproj", "{6CB01B34-D04B-446C-965F-8DC42206261E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManager.Web", "UserManager.Web\UserManager.Web.csproj", "{6CB01B34-D04B-446C-965F-8DC42206261E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManager.BusinessLogic", "UserManager.BusinessLogic\UserManager.BusinessLogic.csproj", "{F23DFA5E-7AB9-4B28-8188-6B9D5E81960A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{6CB01B34-D04B-446C-965F-8DC42206261E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CB01B34-D04B-446C-965F-8DC42206261E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CB01B34-D04B-446C-965F-8DC42206261E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F23DFA5E-7AB9-4B28-8188-6B9D5E81960A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F23DFA5E-7AB9-4B28-8188-6B9D5E81960A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F23DFA5E-7AB9-4B28-8188-6B9D5E81960A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F23DFA5E-7AB9-4B28-8188-6B9D5E81960A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
