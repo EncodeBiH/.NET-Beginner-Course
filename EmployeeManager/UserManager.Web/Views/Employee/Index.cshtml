@@ -2,26 +2,42 @@
 @{
     ViewData["Title"] = "Employees";
 }
+@* CRUD *@
+@* C -> Create
+R -> Read
+U -> Update
+D -> Delete *@
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Success"]
+    </div>
+}
+
+<p>Number of employees: @Model.TotalNumberOfEmployees</p>
+
+<a asp-controller="Employee" asp-action="Add" class="btn btn-primary">Add Employee</a>
 
 <table class="table">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">First name</th>
-            <th scope="col">Last name</th>
+            <th scope="col">Full name</th>
             <th scope="col">Department</th>
-            <th scope="col">Birth date</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var employee in Model.Employees)
         {
             <tr>
-                <th scope="row">1</th>
-                <td>@employee.FirstName</td>
-                <td>@employee.LastName</td>
+                <th scope="row">@employee.Id</th>
+                <td>@employee.FullName</td>
                 <td>@employee.Department</td>
-                <td>@employee.BirthDate.ToShortDateString()</td>
+                <td>
+                    <a asp-controller="Employee" asp-action="Edit" asp-route-id="@employee.Id">Edit</a>
+                </td>
             </tr>
         }
     </tbody>

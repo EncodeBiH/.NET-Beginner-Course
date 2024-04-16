@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using UserManager.Web.Models;
+using UserManager.Web.ViewModels;
 
 namespace UserManager.Web.Controllers;
 public class HomeController : Controller

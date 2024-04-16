@@ -1,0 +1,36 @@
+﻿@model AddEmployeeViewModel
+@{
+    ViewData["Title"] = "Add Employee";
+}
+
+@if (TempData["Error"] is not null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["Error"]
+    </div>
+}
+<form asp-controller="Employee" asp-action="Add" method="post" asp-antiforgery="true">
+   
+    <div class="form-group mb-8">
+        <label asp-for="FirstName">First name</label>
+        <input required="required" type="text" class="form-control" asp-for="FirstName" placeholder="First name">
+    </div>
+
+    <div class="form-group mb-8">
+        <label asp-for="LastName">Last name</label>
+        <input type="text" class="form-control" asp-for="LastName" placeholder="Last name">
+    </div>
+
+    <div class="form-group mb-8">
+        <label asp-for="DepartmentId">Last name</label>
+        <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-select"></select>
+    </div>
+
+    <div class="form-group mb-8">
+        <label asp-for="LastName">Birth date</label>
+        <input type="date" class="form-control" asp-for="BirthDate" placeholder="Birth date">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>

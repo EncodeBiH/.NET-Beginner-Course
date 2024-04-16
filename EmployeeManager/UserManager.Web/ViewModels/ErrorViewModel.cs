@@ -1,4 +1,4 @@
-namespace UserManager.Web.Models;
+namespace UserManager.Web.ViewModels;
 
 public class ErrorViewModel
 {

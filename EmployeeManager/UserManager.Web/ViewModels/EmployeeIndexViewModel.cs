@@ -1,8 +1,17 @@
-﻿using UserManager.BusinessLogic.Entities;
-
-namespace UserManager.Web.ViewModels;
+﻿namespace UserManager.Web.ViewModels;
 
 public class EmployeeIndexViewModel
 {
-    public List<Employee> Employees { get; set; }
+    public int TotalNumberOfEmployees { get; set; }
+
+    public List<EmployeeViewModel> Employees { get; set; }
+}
+
+public class EmployeeViewModel
+{
+    public int Id { get; set; }
+
+    public string FullName { get; set; }
+
+    public string Department { get; set; }
 }
