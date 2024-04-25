@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserManager.BusinessLogic;
 
@@ -11,9 +12,11 @@ using UserManager.BusinessLogic;
 namespace UserManager.BusinessLogic.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240425173538_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace UserManager.BusinessLogic.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EmployeeProject", b =>
+                {
+                    b.Property<int>("EmployeesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EmployeesId", "ProjectsId");
+
+                    b.HasIndex("ProjectsId");
+
+                    b.ToTable("EmployeeProject");
+                });
 
             modelBuilder.Entity("UserManager.BusinessLogic.Entities.Department", b =>
                 {
@@ -73,35 +91,6 @@ namespace UserManager.BusinessLogic.Migrations
                     b.ToTable("Employees", (string)null);
                 });
 
-            modelBuilder.Entity("UserManager.BusinessLogic.Entities.EmployeeProject", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("EndsOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartsOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("EmployeesProjects", (string)null);
-                });
-
             modelBuilder.Entity("UserManager.BusinessLogic.Entities.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -149,7 +138,22 @@ namespace UserManager.BusinessLogic.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("EmployeeProject", b =>
+                {
+                    b.HasOne("UserManager.BusinessLogic.Entities.Employee", null)
+                        .WithMany()
+                        .HasForeignKey("EmployeesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UserManager.BusinessLogic.Entities.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("UserManager.BusinessLogic.Entities.Employee", b =>
@@ -171,38 +175,9 @@ namespace UserManager.BusinessLogic.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UserManager.BusinessLogic.Entities.EmployeeProject", b =>
-                {
-                    b.HasOne("UserManager.BusinessLogic.Entities.Employee", "Employee")
-                        .WithMany("EmployeeProjects")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UserManager.BusinessLogic.Entities.Project", "Project")
-                        .WithMany("EmployeeProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("UserManager.BusinessLogic.Entities.Department", b =>
                 {
                     b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("UserManager.BusinessLogic.Entities.Employee", b =>
-                {
-                    b.Navigation("EmployeeProjects");
-                });
-
-            modelBuilder.Entity("UserManager.BusinessLogic.Entities.Project", b =>
-                {
-                    b.Navigation("EmployeeProjects");
                 });
 
             modelBuilder.Entity("UserManager.BusinessLogic.Entities.User", b =>

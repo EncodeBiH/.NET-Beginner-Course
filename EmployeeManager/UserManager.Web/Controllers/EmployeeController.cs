@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic;
 using UserManager.BusinessLogic.Entities;
 using UserManager.Web.ViewModels;
@@ -8,22 +9,28 @@ namespace UserManager.Web.Controllers;
 
 public class EmployeeController : Controller
 {
-    public EmployeeController()
+    private readonly ApplicationDbContext _context;
+
+    public EmployeeController
+    (
+        ApplicationDbContext context
+    )
     {
-        
+        _context = context;
     }
 
     public IActionResult Index()
     {
-        var numberOfEmployees = Store.Employees.Count;
+        var numberOfEmployees = _context.Employees.Count();
 
-        var employees = Store
+        var employees = _context
             .Employees
+            .Include(x => x.Department)
             .Select(employee => new EmployeeViewModel
             {
                 Id = employee.Id,
                 FullName = $"{employee.FirstName} {employee.LastName}",
-                Department = Store.Departments.First(x => x.Id == employee.DepartmentId).Name
+                Department = employee.Department.Name
             })
             .ToList();
 
@@ -59,14 +66,21 @@ public class EmployeeController : Controller
         }
         var employee = new Employee
         {
-            Id = ++Store.EmployeeIdGenerator,
             FirstName = request.FirstName,
             LastName = request.LastName,
             DepartmentId = request.DepartmentId,
-            BirthDate = request.BirthDate
+            BirthDate = request.BirthDate,
+            User = new User()
+            {
+                Email = "demo@demo.com",
+                Password = "test",
+                Username = "test"
+            }
         };
 
-        Store.Employees.Add(employee);
+        _context.Employees.Add(employee);
+
+        _context.SaveChanges();
 
         TempData["Success"] = "You have successfully added employee.";
 
