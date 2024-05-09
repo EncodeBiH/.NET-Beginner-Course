@@ -3,7 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic;
-using UserManager.BusinessLogic.Entities;
+using UserManager.BusinessLogic.BussinessLogicService.Employees;
 using UserManager.Web.ViewModels;
 
 namespace UserManager.Web.Controllers;
@@ -11,15 +11,18 @@ namespace UserManager.Web.Controllers;
 public class EmployeeController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IEmployeeService _employeeService;
     private readonly IValidator<AddEmployeeViewModel> _addEmployeeValidator;
 
     public EmployeeController
     (
         ApplicationDbContext context,
+        IEmployeeService employeeService,
         IValidator<AddEmployeeViewModel> addEmployeeValidator
     )
     {
         _context = context;
+        _employeeService = employeeService;
         _addEmployeeValidator = addEmployeeValidator;
     }
 
@@ -66,23 +69,7 @@ public class EmployeeController : Controller
             return View(request);
         }
 
-        var employee = new Employee
-        {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            DepartmentId = request.DepartmentId,
-            BirthDate = request.BirthDate,
-            User = new User()
-            {
-                Email = "demo@demo.com",
-                Password = "test",
-                Username = "test"
-            }
-        };
-
-        _context.Employees.Add(employee);
-
-        _context.SaveChanges();
+        _employeeService.Create(request.FirstName, request.LastName, request.DepartmentId, request.BirthDate, request.Username, request.Password, request.Email);
 
         TempData["Success"] = "You have successfully added employee.";
 
@@ -121,23 +108,7 @@ public class EmployeeController : Controller
             return View(request);
         }
 
-        var employee = _context
-            .Employees
-            .FirstOrDefault(x => x.Id == id);
-
-        if (employee is null)
-        {
-            return NotFound();
-        }
-
-        employee.FirstName = request.FirstName;
-        employee.LastName = request.LastName;
-        employee.DepartmentId = request.DepartmentId;
-        employee.BirthDate = request.BirthDate;
-
-        //_context.Employees.Update(employee);
-
-        _context.SaveChanges();
+        _employeeService.Update(id, request.FirstName, request.LastName, request.DepartmentId, request.BirthDate);
 
         TempData["Success"] = "You have successfully edited employee.";
 
@@ -147,20 +118,7 @@ public class EmployeeController : Controller
     [HttpGet]
     public IActionResult Delete([FromRoute] int id)
     {
-        var employee = _context
-            .Employees
-            .Include(x => x.User)
-            .FirstOrDefault(x => x.Id == id);
-
-        if (employee is null)
-        {
-            return NotFound();
-        }
-
-        _context.Employees.Remove(employee);
-        _context.Users.Remove(employee.User);
-
-        _context.SaveChanges();
+        _employeeService.Delete(id);
 
         TempData["Success"] = "You have successfully deleted employee.";
 

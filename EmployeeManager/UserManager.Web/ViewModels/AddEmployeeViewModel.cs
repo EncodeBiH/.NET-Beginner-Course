@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using UserManager.BusinessLogic.Entities;
-
-namespace UserManager.Web.ViewModels;
+﻿namespace UserManager.Web.ViewModels;
 
 public class AddEmployeeViewModel
 {
@@ -12,4 +9,10 @@ public class AddEmployeeViewModel
     public DateOnly BirthDate { get; set; }
 
     public int DepartmentId { get; set; }
+
+    public string Email { get; set; }
+
+    public string Username { get; set; }
+
+    public string Password { get; set; }
 }

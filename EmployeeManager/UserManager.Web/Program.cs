@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic;
+using UserManager.BusinessLogic.BussinessLogicService.Employees;
 using UserManager.Web.Services;
 using UserManager.Web.Validators;
 using UserManager.Web.ViewModels;
@@ -20,6 +21,10 @@ builder
 builder
     .Services
     .AddScoped<ISelectListService, SelectListService>();
+
+builder
+    .Services
+    .AddScoped<IEmployeeService, EmployeeService>();
 // AddScoped or AddTransient or AddSingleton
 
 builder
