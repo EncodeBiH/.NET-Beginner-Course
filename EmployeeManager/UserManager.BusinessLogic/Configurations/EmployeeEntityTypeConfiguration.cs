@@ -29,16 +29,19 @@ public class EmployeeEntityTypeConfiguration : IEntityTypeConfiguration<Employee
         builder
             .HasOne(x => x.Department)
             .WithMany(x => x.Employees)
-            .HasForeignKey(x => x.DepartmentId);
+            .HasForeignKey(x => x.DepartmentId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasOne(x => x.User)
             .WithOne(x => x.Employee)
-            .HasForeignKey<Employee>(x => x.Id);
+            .HasForeignKey<Employee>(x => x.Id)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasMany(x => x.EmployeeProjects)
             .WithOne(x => x.Employee)
-            .HasForeignKey(x => x.EmployeeId);
+            .HasForeignKey(x => x.EmployeeId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

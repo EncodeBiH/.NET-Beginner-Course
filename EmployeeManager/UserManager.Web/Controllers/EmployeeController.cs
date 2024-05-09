@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic;
 using UserManager.BusinessLogic.Entities;
@@ -10,13 +11,16 @@ namespace UserManager.Web.Controllers;
 public class EmployeeController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IValidator<AddEmployeeViewModel> _addEmployeeValidator;
 
     public EmployeeController
     (
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        IValidator<AddEmployeeViewModel> addEmployeeValidator
     )
     {
         _context = context;
+        _addEmployeeValidator = addEmployeeValidator;
     }
 
     public IActionResult Index()
@@ -25,6 +29,7 @@ public class EmployeeController : Controller
 
         var employees = _context
             .Employees
+            .AsNoTracking()
             .Include(x => x.Department)
             .Select(employee => new EmployeeViewModel
             {
@@ -46,24 +51,21 @@ public class EmployeeController : Controller
     [HttpGet]
     public IActionResult Add()
     {
-        var addViewModel = new AddEmployeeViewModel();
-
-        FillEmployeeViewModel(addViewModel);
-
-        return View(addViewModel);
+        return View(new AddEmployeeViewModel());
     }
 
     [HttpPost]
     public IActionResult Add([FromForm] AddEmployeeViewModel request)
     {
-        if (!ValidateEmployee(request))
-        {
-            TempData["Error"] = "Fix the validation errors.";
+        var validationResult = _addEmployeeValidator.Validate(request);
 
-            FillEmployeeViewModel(request);
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
 
             return View(request);
         }
+
         var employee = new Employee
         {
             FirstName = request.FirstName,
@@ -89,7 +91,15 @@ public class EmployeeController : Controller
 
     public IActionResult Edit([FromRoute] int id)
     {
-        var employee = Store.Employees.First(x => x.Id == id);
+        var employee = _context
+            .Employees
+            .AsNoTracking()
+            .FirstOrDefault(x => x.Id == id);
+
+        if (employee is null)
+        {
+            NotFound();
+        }
 
         var editEmployeeViewModel = new EditEmployeeViewModel
         {
@@ -100,20 +110,34 @@ public class EmployeeController : Controller
             BirthDate = employee.BirthDate
         };
 
-        FillEditEmployeeViewModel(editEmployeeViewModel);
-
         return View(editEmployeeViewModel);
     }
 
     [HttpPost]
     public IActionResult Edit([FromRoute] int id, [FromForm] EditEmployeeViewModel request)
     {
-        var employee = Store.Employees.First(x => x.Id == id);
+        if (!ModelState.IsValid)
+        {
+            return View(request);
+        }
+
+        var employee = _context
+            .Employees
+            .FirstOrDefault(x => x.Id == id);
+
+        if (employee is null)
+        {
+            return NotFound();
+        }
 
         employee.FirstName = request.FirstName;
         employee.LastName = request.LastName;
         employee.DepartmentId = request.DepartmentId;
         employee.BirthDate = request.BirthDate;
+
+        //_context.Employees.Update(employee);
+
+        _context.SaveChanges();
 
         TempData["Success"] = "You have successfully edited employee.";
 
@@ -123,51 +147,24 @@ public class EmployeeController : Controller
     [HttpGet]
     public IActionResult Delete([FromRoute] int id)
     {
-        var employee = Store.Employees.First(x => x.Id == id);
+        var employee = _context
+            .Employees
+            .Include(x => x.User)
+            .FirstOrDefault(x => x.Id == id);
 
-        Store.Employees.Remove(employee);
+        if (employee is null)
+        {
+            return NotFound();
+        }
+
+        _context.Employees.Remove(employee);
+        _context.Users.Remove(employee.User);
+
+        _context.SaveChanges();
 
         TempData["Success"] = "You have successfully deleted employee.";
 
         return RedirectToAction("Index");
-    }
-
-    private bool ValidateEmployee(AddEmployeeViewModel request)
-    {
-        if (string.IsNullOrWhiteSpace(request.FirstName) || string.IsNullOrWhiteSpace(request.LastName))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private void FillEmployeeViewModel(AddEmployeeViewModel request)
-    {
-        var departments = Store
-            .Departments
-            .Select(department => new SelectListItem
-            {
-                Text = department.Name,
-                Value = department.Id.ToString()
-            })
-            .ToList();
-
-        request.Departments = departments;
-    }
-
-    private void FillEditEmployeeViewModel(EditEmployeeViewModel request)
-    {
-        var departments = Store
-            .Departments
-            .Select(department => new SelectListItem
-            {
-                Text = department.Name,
-                Value = department.Id.ToString()
-            })
-            .ToList();
-
-        request.Departments = departments;
     }
 }
     

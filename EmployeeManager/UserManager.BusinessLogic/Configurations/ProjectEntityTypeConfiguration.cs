@@ -20,6 +20,7 @@ public class ProjectEntityTypeConfiguration : IEntityTypeConfiguration<Project>
         builder
             .HasMany(x => x.EmployeeProjects)
             .WithOne(x => x.Project)
-            .HasForeignKey(x => x.ProjectId);
+            .HasForeignKey(x => x.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

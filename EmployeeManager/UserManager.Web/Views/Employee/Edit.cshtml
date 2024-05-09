@@ -1,4 +1,6 @@
-﻿@model EditEmployeeViewModel
+﻿@using UserManager.Web.Services
+@model EditEmployeeViewModel
+@inject ISelectListService SelectListService
 @{
     ViewData["Title"] = "Edit Employee";
 }
@@ -10,27 +12,23 @@
     </div>
 }
 <form asp-controller="Employee" asp-action="Edit" asp-route-id="@Model.Id" method="post" asp-antiforgery="true">
-    
     <div class="form-group mb-8">
         <label asp-for="FirstName">First name</label>
-        <input required="required" type="text" class="form-control" asp-for="FirstName" placeholder="First name">
+        <input type="text" class="form-control" asp-for="FirstName" placeholder="First name">
+        <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
-
     <div class="form-group mb-8">
         <label asp-for="LastName">Last name</label>
         <input type="text" class="form-control" asp-for="LastName" placeholder="Last name">
     </div>
-
     <div class="form-group mb-8">
         <label asp-for="DepartmentId">Last name</label>
-        <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-select"></select>
+        <select asp-for="DepartmentId" asp-items="SelectListService.GetDepartments()" class="form-select"></select>
     </div>
-
     <div class="form-group mb-8">
         <label asp-for="LastName">Birth date</label>
         <input type="date" class="form-control" asp-for="BirthDate" placeholder="Birth date">
     </div>
-
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 <a asp-controller="Employee" asp-action="Delete" asp-route-id="@Model.Id"> Delete </a>

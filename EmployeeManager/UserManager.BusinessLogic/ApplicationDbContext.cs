@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UserManager.BusinessLogic.Configurations;
 using UserManager.BusinessLogic.Entities;
 
 namespace UserManager.BusinessLogic;
@@ -27,16 +26,11 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        //modelBuilder.ApplyConfiguration(new EmployeeEntityTypeConfiguration());
-
-        //var employeeBuilder = modelBuilder.Entity<Employee>();
-
-        //employeeBuilder
-        //    .Property(x => x.FirstName)
-        //    .HasMaxLength(255);
-
-        //employeeBuilder
-        //    .Property(x => x.LastName)
-        //    .HasMaxLength(255);
+        //modelBuilder
+        //    .Entity<Department>()
+        //    .Metadata
+        //    .GetForeignKeys()
+        //    .ToList()
+        //    .ForEach(x => x.DeleteBehavior = DeleteBehavior.Restrict);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-
-namespace UserManager.Web.ViewModels;
+﻿namespace UserManager.Web.ViewModels;
 
 public class EditEmployeeViewModel
 {
@@ -13,6 +11,4 @@ public class EditEmployeeViewModel
     public DateOnly BirthDate { get; set; }
 
     public int DepartmentId { get; set; }
-
-    public List<SelectListItem> Departments { get; set; }
 }

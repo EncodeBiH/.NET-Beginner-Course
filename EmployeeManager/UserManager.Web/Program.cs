@@ -1,5 +1,9 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic;
+using UserManager.Web.Services;
+using UserManager.Web.Validators;
+using UserManager.Web.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,15 @@ builder
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
     });
+
+builder
+    .Services
+    .AddScoped<ISelectListService, SelectListService>();
+// AddScoped or AddTransient or AddSingleton
+
+builder
+    .Services
+    .AddScoped<IValidator<AddEmployeeViewModel>, AddEmployeeViewModelValidator>();
 
 var app = builder.Build();
 

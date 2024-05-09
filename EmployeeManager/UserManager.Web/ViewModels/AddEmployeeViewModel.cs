@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using UserManager.BusinessLogic.Entities;
 
 namespace UserManager.Web.ViewModels;
 
@@ -11,6 +12,4 @@ public class AddEmployeeViewModel
     public DateOnly BirthDate { get; set; }
 
     public int DepartmentId { get; set; }
-
-    public List<SelectListItem> Departments { get; set; }
 }
