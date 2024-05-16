@@ -6,7 +6,7 @@ public interface IEmployeeService
 {
     Employee? GetById(int id);
 
-    void Create(string firstName, string lastName, int departmentId, DateOnly birthDate, string username, string password, string email);
+    Task Create(string firstName, string lastName, int departmentId, DateOnly birthDate, string username, string password, string email);
 
     void Update(int id, string firstName, string lastName, int departmentId, DateOnly birtDate);
 

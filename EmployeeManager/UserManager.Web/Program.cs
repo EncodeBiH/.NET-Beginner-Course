@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic;
 using UserManager.BusinessLogic.BussinessLogicService.Employees;
@@ -25,6 +26,13 @@ builder
 builder
     .Services
     .AddScoped<IEmployeeService, EmployeeService>();
+
+builder
+    .Services
+    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
 // AddScoped or AddTransient or AddSingleton
 
 builder
@@ -46,6 +54,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute
 (

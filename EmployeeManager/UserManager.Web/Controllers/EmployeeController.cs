@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic;
 using UserManager.BusinessLogic.BussinessLogicService.Employees;
@@ -58,7 +59,7 @@ public class EmployeeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Add([FromForm] AddEmployeeViewModel request)
+    public async Task<IActionResult> Add([FromForm] AddEmployeeViewModel request)
     {
         var validationResult = _addEmployeeValidator.Validate(request);
 
@@ -69,7 +70,7 @@ public class EmployeeController : Controller
             return View(request);
         }
 
-        _employeeService.Create(request.FirstName, request.LastName, request.DepartmentId, request.BirthDate, request.Username, request.Password, request.Email);
+        await _employeeService.Create(request.FirstName, request.LastName, request.DepartmentId, request.BirthDate, request.Username, request.Password, request.Email);
 
         TempData["Success"] = "You have successfully added employee.";
 

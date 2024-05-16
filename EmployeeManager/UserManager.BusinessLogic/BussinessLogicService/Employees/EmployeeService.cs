@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic.Entities;
 
 namespace UserManager.BusinessLogic.BussinessLogicService.Employees;
@@ -6,13 +7,16 @@ namespace UserManager.BusinessLogic.BussinessLogicService.Employees;
 public class EmployeeService : IEmployeeService
 {
     private readonly ApplicationDbContext _applicationDbContext;
+    private readonly UserManager<IdentityUser> _userManager;
 
     public EmployeeService
     (
-        ApplicationDbContext applicationDbContext
+        ApplicationDbContext applicationDbContext,
+        UserManager<IdentityUser> userManager
     )
     {
         _applicationDbContext = applicationDbContext;
+        _userManager = userManager;
     }
 
     public Employee? GetById(int id)
@@ -20,7 +24,7 @@ public class EmployeeService : IEmployeeService
         return _applicationDbContext.Employees.FirstOrDefault(x => x.Id == id);
     }
 
-    public void Create(string firstName, string lastName, int departmentId, DateOnly birthDate, string username, string password, string email)
+    public async Task Create(string firstName, string lastName, int departmentId, DateOnly birthDate, string username, string password, string email)
     {
         _applicationDbContext.Add(new Employee
         {
@@ -36,7 +40,12 @@ public class EmployeeService : IEmployeeService
             }
         });
 
-        _applicationDbContext.SaveChanges();
+        var user = await _userManager.CreateAsync(new IdentityUser(username)
+        {
+            Email = email
+        }, password);
+
+        await _applicationDbContext.SaveChangesAsync();
     }
 
     public void Update(int id, string firstName, string lastName, int departmentId, DateOnly birtDate)
