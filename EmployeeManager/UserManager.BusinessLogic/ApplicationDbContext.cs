@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic.Entities;
 
 namespace UserManager.BusinessLogic;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
@@ -14,8 +15,6 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Employee> Employees { get; set; }
 
     public DbSet<Department> Departments { get; set; }
-
-    public DbSet<User> Users { get; set; }
 
     public DbSet<Project> Projects { get; set; }
 

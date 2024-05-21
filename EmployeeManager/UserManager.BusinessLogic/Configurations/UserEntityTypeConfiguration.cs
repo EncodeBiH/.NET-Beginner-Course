@@ -8,14 +8,6 @@ public  class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder
-            .Property(x => x.Email)
-            .HasMaxLength(255);
-
-        builder
-            .Property(x => x.Username)
-            .HasMaxLength(15);
-
         ConfigureRelationship(builder);
     }
 

@@ -1,8 +1,11 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic;
 using UserManager.BusinessLogic.BussinessLogicService.Employees;
+using UserManager.BusinessLogic.BussinessLogicService.UserService;
+using UserManager.BusinessLogic.Entities;
 using UserManager.Web.Services;
 using UserManager.Web.Validators;
 using UserManager.Web.ViewModels;
@@ -29,9 +32,39 @@ builder
 
 builder
     .Services
-    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddScoped<IUserService, UserService>();
+
+builder
+    .Services
+    .AddIdentity<User, IdentityRole<int>>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder
+    .Services
+    .AddAuthorization();
+
+//builder
+//    .Services.Configure<IdentityOptions>(options =>
+//    {
+//    });
+
+builder
+    .Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login/login";
+        options.LogoutPath = "/logout/logout";
+    });
+
+builder
+    .Services
+    .Configure<CookieAuthenticationOptions>(options =>
+    {
+        options.LoginPath = "/login/login";
+        options.LogoutPath = "/logout/logout";
+    });
 
 // AddScoped or AddTransient or AddSingleton
 
@@ -61,7 +94,7 @@ app.UseAuthorization();
 app.MapControllerRoute
 (
     name: "default",
-    pattern: "{controller=Employee}/{action=Index}/{id?}"
+    pattern: "{controller=login}/{action=login}/{id?}"
 );
 
 app.Run();

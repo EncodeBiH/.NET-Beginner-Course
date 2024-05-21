@@ -1,4 +1,6 @@
-﻿namespace UserManager.BusinessLogic.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace UserManager.BusinessLogic.Entities;
 
 public class Employee
 {

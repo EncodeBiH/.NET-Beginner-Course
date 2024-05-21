@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using UserManager.BusinessLogic;
 using UserManager.BusinessLogic.BussinessLogicService.Employees;
@@ -9,6 +9,7 @@ using UserManager.Web.ViewModels;
 
 namespace UserManager.Web.Controllers;
 
+[Authorize]
 public class EmployeeController : Controller
 {
     private readonly ApplicationDbContext _context;

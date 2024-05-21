@@ -7,12 +7,12 @@ namespace UserManager.BusinessLogic.BussinessLogicService.Employees;
 public class EmployeeService : IEmployeeService
 {
     private readonly ApplicationDbContext _applicationDbContext;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public EmployeeService
     (
         ApplicationDbContext applicationDbContext,
-        UserManager<IdentityUser> userManager
+        UserManager<User> userManager
     )
     {
         _applicationDbContext = applicationDbContext;
@@ -26,26 +26,27 @@ public class EmployeeService : IEmployeeService
 
     public async Task Create(string firstName, string lastName, int departmentId, DateOnly birthDate, string username, string password, string email)
     {
-        _applicationDbContext.Add(new Employee
+        var user = new User
         {
-            FirstName = firstName,
-            LastName = lastName,
-            DepartmentId = departmentId,
-            BirthDate = birthDate,
-            User = new User()
-            {
-                Email = email,
-                Password = password,
-                Username = username
-            }
-        });
-
-        var user = await _userManager.CreateAsync(new IdentityUser(username)
-        {
+            UserName = username,
             Email = email
-        }, password);
+        };
 
-        await _applicationDbContext.SaveChangesAsync();
+        var identityResult = await _userManager.CreateAsync(user, password);
+
+        if (identityResult.Succeeded)
+        {
+            _applicationDbContext.Add(new Employee
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                DepartmentId = departmentId,
+                BirthDate = birthDate,
+                User = user
+            });
+
+            await _applicationDbContext.SaveChangesAsync();
+        }
     }
 
     public void Update(int id, string firstName, string lastName, int departmentId, DateOnly birtDate)
