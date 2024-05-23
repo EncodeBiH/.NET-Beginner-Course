@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -36,13 +37,13 @@ builder
 
 builder
     .Services
-    .AddIdentity<User, IdentityRole<int>>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+    .AddAuthorization();
 
 builder
     .Services
-    .AddAuthorization();
+    .AddIdentity<User, IdentityRole<int>>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 //builder
 //    .Services.Configure<IdentityOptions>(options =>
@@ -52,19 +53,31 @@ builder
 builder
     .Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/login/login";
-        options.LogoutPath = "/logout/logout";
-    });
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 
 builder
     .Services
-    .Configure<CookieAuthenticationOptions>(options =>
-    {
-        options.LoginPath = "/login/login";
-        options.LogoutPath = "/logout/logout";
-    });
+    .Configure<AuthenticationOptions>(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+});
+
+builder
+    .Services
+    .Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+
+    options.AccessDeniedPath = new PathString("/login/login");
+    options.LoginPath = new PathString("/login/login");
+    options.LogoutPath = new PathString("/logout/logout");
+});
 
 // AddScoped or AddTransient or AddSingleton
 
